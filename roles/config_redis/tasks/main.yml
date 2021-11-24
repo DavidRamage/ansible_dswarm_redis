@@ -1,0 +1,15 @@
+---
+- name: Configure the Redis manager node
+  community.general.redis:
+    login_host: "{{ ansible_facts.swarm_info.nodes[0].Hostname }}"
+    replica_mode: master
+    command: replica
+
+- name: Configure the Redis replica nodes
+  community.general.redis:
+    login_host: "{{ item.Hostname }}"
+    master_host: "{{ ansible_facts.swarm_info.nodes[0].Hostname }}"
+    replica_mode: replica
+    command: replica
+    master_port: 6379
+  loop: "{{ ansible_facts.swarm_info.nodes[1:] }}"
